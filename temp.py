@@ -29,7 +29,7 @@ for file_path in file_paths:
         
 # Each file has the same fs, thus there is no need to iterate over files
 sample_rate = 1 / np.mean(np.diff(time[0]))
-file_number = 15
+file_number = 27
 
 
 # Standard min/max norm

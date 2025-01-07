@@ -106,7 +106,7 @@ def double_drop_dtw(
     many_to_one=True,
     return_labels=False,
 ):
-    """Drop-DTW algorithm that allows drops from both sequences. See Algorithm 1 in Appendix.
+    """Drop-DTW algorithm that allows drops from both sequences.
 
     Parameters
     ----------

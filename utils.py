@@ -198,7 +198,7 @@ def drop_dtw(costs, drop_costs, exclusive=True, contiguous=True, return_labels=F
     return min_cost, path, dropped
 
 
-def double_drop_dtw(costs, drop_costs1, drop_costs2, contiguous=True, return_labels=False):
+def double_drop_dtw(costs, drop_costs1, drop_costs2, contiguous=True):
     """DTW algorithm allowing drops from both sequences.
     
     Parameters
@@ -211,8 +211,6 @@ def double_drop_dtw(costs, drop_costs1, drop_costs2, contiguous=True, return_lab
         Drop costs for second sequence
     contiguous: bool
         If True, only contiguous matches allowed
-    return_labels: bool
-        If True, returns alignment labels
     """
     N, M = costs.shape
     INF = 1e9
@@ -296,11 +294,4 @@ def double_drop_dtw(costs, drop_costs1, drop_costs2, contiguous=True, return_lab
 
     path.reverse()  # Reverse the path to start from the beginning
 
-    if return_labels:
-        labels = np.zeros(M)
-        for i, j in path:
-            if i > 0 and j > 0:
-                labels[j-1] = i
-        return labels
-    else:
-        return min_cost, path, dropped1, dropped2
+    return min_cost, path, dropped1, dropped2
