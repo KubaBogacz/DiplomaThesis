@@ -85,19 +85,45 @@ def compute_all_costs(series1, series2, drop_cost_type="constant", drop_multipli
         
         
     elif drop_cost_type == "learnable":
-        if cost_network is None:
-            raise ValueError("must provide cost_network for learnable drop costs")
+        net_x = CostNetwork(series1.shape[0])
+        net_z = CostNetwork(series2.shape[0])
+
+        # Compute means of the two series
+        mean_x = np.mean(series1, axis=0)
+        mean_z = np.mean(series2, axis=0)
+
+        mean_x_t = torch.tensor(mean_x, dtype=torch.float32).unsqueeze(0)
+        mean_z_t = torch.tensor(mean_z, dtype=torch.float32).unsqueeze(0)
         
-        mean1 = torch.tensor(np.mean(series1, axis=0), dtype=torch.float32)
-        mean2 = torch.tensor(np.mean(series1, axis=0), dtype=torch.float32)
-        
+        mean_z_t = mean_z_t.view(1, -1)
+
+        # Evaluate networks without gradient tracking
         with torch.no_grad():
-            x_drop_costs = cost_network(mean2).item() * np.ones(len(series1))
-            z_drop_costs = cost_network(mean1).item() * np.ones(len(series2))
-            
+            fx_mean_z = net_x(mean_z_t)
+            fz_mean_x = net_z(mean_x_t)
+
+        # Convert network outputs
+        if fx_mean_z.numel() == 1:
+            fx_mean_z = fx_mean_z.item()
+        else:
+            fx_mean_z = fx_mean_z.view(1, -1).numpy()
+
+        if fz_mean_x.numel() == 1:
+            fz_mean_x = fz_mean_x.item()
+        else:
+            fz_mean_x = fz_mean_x.view(1, -1).numpy()
+
+        # Compute element-wise drop costs
+        dx = series1 * fx_mean_z
+        dz = series2 * fz_mean_x
+
+        # Sum across dimensions if necessary
+        x_drop_costs = dx.sum(axis=1) if dx.ndim > 1 else dx
+        z_drop_costs = dz.sum(axis=1) if dz.ndim > 1 else dz
+        
     else:
         raise ValueError(f"Unknown drop_cost_type: {drop_cost_type}")
-    
+        
     # Copute drop probabilities
     # drop_probs = 1.0 / (1.0 + np.exp(-zx_costs + drop_costs))
     

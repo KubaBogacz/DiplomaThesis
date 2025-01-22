@@ -37,8 +37,9 @@ def customDtwPlotTwoWay(dtw_obj, xts=None, yts=None,
     
     # ax.set_xticks(range(6))
     # ax.set_xticklabels([500 * i for i in range(6)])
-    ax.set_xticks(np.arange(0, 301, 50))
-    ax.set_xticklabels([f'{i * 500}' for i in range(7)])
+    xtick_step = max(1, len(xts) // 6)
+    ax.set_xticks(np.arange(0, len(xts) + 1, xtick_step))
+    ax.set_xticklabels([f'{i * xtick_step}' for i in range(len(xts) // xtick_step + 1)])
     
     ax.set_yticks([xts_min, xts_mean, xts_max])
 
@@ -188,10 +189,10 @@ def dropDtwPlotThreeWay(xts, yts, matched_indices=None,
     axr.invert_xaxis()
     axr.set_ylabel(ylab)
 
-    # Mark dropped values in the query plot
     if dropped1 is not None:
-        axq.scatter(dropped1, [xts[i] for i in dropped1], color='r', zorder=5, label='Dropped Query Points')
-
+        valid_dropped1 = [d for d in dropped1 if d < len(xts)]
+        axq.scatter(valid_dropped1, [xts[i] for i in valid_dropped1], color='r', zorder=5, label='Dropped Query Points')
+    
     # Mark dropped values in the reference plot
     if dropped2 is not None:
         valid_dropped2 = [d for d in dropped2 if d < len(yts)]
