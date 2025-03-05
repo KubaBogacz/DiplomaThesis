@@ -1,7 +1,3 @@
-Here is a README based on the provided summary of your work:
-
----
-
 # Comparative Analysis of Algorithms for Signal Alignment Between Sequences Considering Outliers
 
 This repository contains the code and data for the engineering thesis titled **"Comparative Analysis of Algorithms for Signal Alignment Between Sequences Considering Outliers"** by Jakub Bogacz from Wrocław University of Science and Technology. The thesis focuses on evaluating the robustness of **Dynamic Time Warping (DTW)** and its variant, **Drop-DTW**, in the context of biomedical signal alignment.
